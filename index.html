@@ -2,106 +2,272 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Архив «Кобальт» // Доступ по коду</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Архив «Кобальт» // Терминал доступа</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* -----------------------------------------------
+           Базовые стили и цветовая схема
+        ----------------------------------------------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: radial-gradient(circle at center, #1a0a00 0%, #000000 100%);
+            background: radial-gradient(circle at 30% 10%, #0a0500 0%, #000000 100%);
             color: #FF6600;
-            font-family: 'Courier New', monospace;
+            font-family: 'Courier New', 'Fira Code', monospace;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1rem;
+            padding: 1.5rem;
+            font-size: 1rem;
         }
+
+        /* Основной блок терминала */
         .terminal {
-            max-width: 600px;
+            max-width: 750px;
             width: 100%;
-            background: rgba(0,0,0,0.9);
-            border: 1px solid #FF6600;
-            box-shadow: 0 0 20px rgba(255,102,0,0.3);
-            padding: 2rem;
-            border-radius: 8px;
-            text-align: center;
+            background: rgba(10, 5, 0, 0.85);
+            backdrop-filter: blur(3px);
+            border: 1.5px solid #FF6600;
+            box-shadow: 0 0 25px rgba(255, 102, 0, 0.4), inset 0 0 10px rgba(255, 102, 0, 0.1);
+            padding: 1.8rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
         }
-        .logo {
-            font-size: 2rem;
-            font-weight: bold;
-            letter-spacing: 4px;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 5px #FF6600;
-        }
-        .sub {
-            margin-bottom: 2rem;
-            border-left: 3px solid #FF6600;
-            padding-left: 1rem;
-            text-align: left;
-        }
-        .input-area {
+
+        /* Шапка с логотипом и статусом */
+        .header {
+            border-bottom: 1px solid #FF6600;
+            margin-bottom: 1.8rem;
+            padding-bottom: 0.5rem;
             display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-            margin-bottom: 1rem;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
         }
-        input {
-            background: #000;
-            border: 1px solid #FF6600;
-            color: #FF6600;
-            padding: 0.5rem;
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-shadow: 0 0 4px #FF6600;
+        }
+
+        .status {
+            font-size: 0.75rem;
+            color: #ffaa66;
+            font-style: italic;
+        }
+
+        /* Стили для системных сообщений (имитация загрузки) */
+        .sys-msg {
             font-family: monospace;
-            width: 60%;
-            outline: none;
+            font-size: 0.85rem;
+            color: #ffaa66;
+            margin: 0.3rem 0;
+            border-left: 2px solid #FF6600;
+            padding-left: 0.6rem;
         }
+
+        /* Командная строка */
+        .cli {
+            margin: 1.5rem 0 1rem;
+            background: #0a0500;
+            padding: 1rem;
+            border: 1px solid #FF6600;
+            border-radius: 6px;
+        }
+
+        .prompt {
+            color: #FF6600;
+            font-weight: bold;
+        }
+
+        .input-line {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        #cobaltInput {
+            background: transparent;
+            border: none;
+            color: #FF6600;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            width: 70%;
+            outline: none;
+            caret-color: #FF6600;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.2rem;
+            background-color: #FF6600;
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Кнопка */
         button {
             background: #FF6600;
             border: none;
             color: #000;
             font-weight: bold;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
+            padding: 0.4rem 1rem;
             font-family: monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            border-radius: 4px;
         }
-        .error { color: #F44; margin-top: 0.5rem; }
+
+        button:hover {
+            background: #ff9933;
+            box-shadow: 0 0 8px #FF6600;
+        }
+
+        /* Ошибки и сообщения */
+        .error {
+            color: #ff4444;
+            margin: 0.7rem 0 0;
+            font-weight: bold;
+            text-shadow: 0 0 2px #ff0000;
+        }
+
+        /* Футер и общие ссылки */
         .footer {
-            margin-top: 2rem;
+            margin-top: 1.8rem;
             font-size: 0.7rem;
+            text-align: center;
             border-top: 1px dashed #FF6600;
             padding-top: 1rem;
+            opacity: 0.8;
+        }
+
+        a {
+            color: #FF6600;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Стиль для системного лога */
+        .log-line {
+            color: #cc8844;
+            font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
-<div class="terminal">
-    <div class="logo">/// КОБАЛЬТ ///</div>
-    <div class="sub">Независимый архив. Введите код доступа для получения рассекреченных материалов.</div>
-    <div class="input-area">
-        <input type="text" id="cobaltCode" placeholder="[ ACCESS CODE ]" autocomplete="off">
-        <button id="cobaltBtn">АКТИВИРОВАТЬ</button>
+
+<div class="terminal" id="terminalRoot">
+    <div class="header">
+        <div class="logo">/// АРХИВ «КОБАЛЬТ» ///</div>
+        <div class="status"># ВНЕШНЕЕ ПОДКЛЮЧЕНИЕ</div>
     </div>
-    <div id="errorMsg" class="error"></div>
-    <div class="footer">Анонимный архив. Правда не может быть засекречена.</div>
+
+    <!-- Системные сообщения (генерируются динамически) -->
+    <div id="sysMessages">
+        <div class="sys-msg">[>] Инициализация защищённого канала...</div>
+        <div class="sys-msg">[>] Обход систем обнаружения [OK]</div>
+        <div class="sys-msg">[>] Доступ к архиву предоставлен.</div>
+    </div>
+
+    <!-- Имитация командной строки -->
+    <div class="cli">
+        <div class="prompt">$ АВТОРИЗАЦИЯ</div>
+        <div class="input-line">
+            <span style="color:#FF6600;">&gt;</span>
+            <input type="text" id="cobaltInput" placeholder="введите_идентификатор_доступа" autocomplete="off">
+            <button id="cobaltBtn">ВОЙТИ</button>
+        </div>
+        <div id="errorMsg" class="error"></div>
+    </div>
+
+    <div class="footer">
+        <span class="log-line">[LOG] СЕАНС ЗАЛОГИРОВАН.</span> 
+        Анонимный архив. Правда не может быть скрыта.
+    </div>
 </div>
+
 <script>
+    // Справочник кодов -> страницы (с любыми кодами, которые нужны)
     const codes = {
         "COBALT-01": "cobalt_victory.html"
     };
-    let failed = 0;
-    document.getElementById("cobaltBtn").addEventListener("click", () => {
-        const code = document.getElementById("cobaltCode").value.trim().toUpperCase();
-        const errDiv = document.getElementById("errorMsg");
+
+    let failedAttempts = 0;
+    const terminal = document.getElementById('terminalRoot');
+    const sysDiv = document.getElementById('sysMessages');
+
+    // Функция динамической смены системных сообщений для атмосферы
+    function updateSystemMessages() {
+        const messagesList = [
+            "[>] Проверка цифровой подписи... [ОТКЛЮЧЕНО]",
+            "[!] Обнаружен запрос от неавторизованного источника.",
+            "[>] Установка анонимного туннеля... [ГОТОВО]",
+            "[>] Доступ к массиву данных «Кобальт» разрешён."
+        ];
+        if (sysDiv) {
+            sysDiv.innerHTML = '';
+            for (let i = 0; i < 2; i++) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'sys-msg';
+                msgDiv.textContent = messagesList[Math.floor(Math.random() * messagesList.length)];
+                sysDiv.appendChild(msgDiv);
+            }
+        }
+    }
+
+    // Обновление сообщений при загрузке
+    updateSystemMessages();
+    // Меняем сообщения каждые 15 секунд для интереса (имитация живого монитора)
+    setInterval(updateSystemMessages, 16000);
+
+    // Обработка ввода кода
+    document.getElementById("cobaltBtn").addEventListener("click", function() {
+        const code = document.getElementById("cobaltInput").value.trim().toUpperCase();
+        const errorDiv = document.getElementById("errorMsg");
+        errorDiv.innerText = "";
+
         if (codes[code]) {
             window.location.href = codes[code];
         } else {
-            failed++;
-            errDiv.innerText = `ДОСТУП ЗАПРЕЩЁН // ПОПЫТКА ${failed}`;
-            if (failed >= 3) errDiv.innerText += " // ДОСТУП ЗАБЛОКИРОВАН НА 60 СЕКУНД";
-            setTimeout(() => { errDiv.innerText = ""; }, 3000);
+            failedAttempts++;
+            errorDiv.innerText = `ДОСТУП ЗАПРЕЩЁН // ПОПЫТКА ${failedAttempts}`;
+            if (failedAttempts >= 3) {
+                errorDiv.innerText += " // ВРЕМЕННАЯ БЛОКИРОВКА (30 СЕК)";
+                document.getElementById("cobaltBtn").disabled = true;
+                setTimeout(() => {
+                    document.getElementById("cobaltBtn").disabled = false;
+                    errorDiv.innerText = "";
+                }, 30000);
+            } else {
+                setTimeout(() => { errorDiv.innerText = ""; }, 4000);
+            }
         }
-        document.getElementById("cobaltCode").value = "";
+        document.getElementById("cobaltInput").value = "";
     });
-    document.getElementById("cobaltCode").addEventListener("keypress", (e) => {
-        if (e.key === "Enter") document.getElementById("cobaltBtn").click();
+
+    // Enter в поле ввода
+    document.getElementById("cobaltInput").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+            document.getElementById("cobaltBtn").click();
+        }
     });
 </script>
 </body>
